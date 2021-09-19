@@ -9,36 +9,47 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include "numbers/dll_add_numbers.h"
 
-int do_some_math(int min, int max){
-    static std::vector<int> to_add;
+unsigned long long do_some_math(unsigned  long long min, unsigned long long max){
+    std::vector< unsigned long long> to_add;
+    auto counter{0ull};
     to_add.reserve(max + 1);
     for(; min <= max; ++min){
         to_add.emplace_back(min);
     }
-
-    return std::accumulate(to_add.begin(), to_add.end(), 0);
+    std::for_each(to_add.begin(), to_add.end(), [&counter](unsigned long long e){counter = hello::add(counter, e);});
+    return counter;
 }
-
 int package_task_main(){
-    int val{};
-
-//    pt=;
-    std::packaged_task<void(int&)> pt{[](auto & v){ v = 128;}};
 
 
-    std::packaged_task<int(int, int)> pt2{do_some_math};
-    auto future = pt.get_future();
-    auto future2 = pt2.get_future();
-    pt(val);
-    // -1410065407
-    pt2(-88888888, 88888888);
+    std::vector<std::future<decltype(do_some_math(1, 1))>> futures;
+    std::packaged_task p1(do_some_math), p2(do_some_math), p3(do_some_math), p4(do_some_math), p5(do_some_math),
+            p6(do_some_math), p7(do_some_math), p8(do_some_math);
 
-    std::cout << val << ' '  << future2.get() << '\n';
+    futures.push_back(p1.get_future());    p1(00000000, 9999999);
+    futures.push_back(p2.get_future());    p2(10000000, 19999999);
+    futures.push_back(p3.get_future());    p3(20000000, 29999999);
+    futures.push_back(p4.get_future());    p4(30000000, 39999999);
+    futures.push_back(p5.get_future());    p5(40000000, 49999999);
+    futures.push_back(p6.get_future());    p6(50000000, 59999999);
+    futures.push_back(p7.get_future());    p7(60000000, 69999999);
+    futures.push_back(p8.get_future());    p8(70000000, 79999999);
 
+
+
+
+
+    long long acc{};
+    long long temp{};
+    for(auto & e : futures){
+        temp = e.get();
+        acc += temp;
+        std::cout << "val:" << temp << "\t total:" << acc << '\n';
+    }
 
     return 0;
-
 }
 
 static auto v = package_task_main();
